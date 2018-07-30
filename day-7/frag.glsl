@@ -31,10 +31,9 @@ uniform vec2 u_trails[10];
 /* Signed distance drawing methods */
 float fill(in float d) { return 1.0 - smoothstep(0.0, 0.3 * 2.0, d); }
 
-float stroke(in float d, in float t) { return 1.0 - smoothstep(t - 0.3 * 1.5, t + 0.3 * 1.5, abs(d)); }
+float stroke(in float d, in float t) { return 1.0 - smoothstep(t - 0.01 * 1.5, t + 0.01 * 1.5, abs(d)); }
 
 vec3 draw(in sampler2D t, in vec2 pos, in vec2 w) { vec2 s = w / 1.0; s.x *= -1.0; return texture2D(t, pos / s + 0.5).rgb; }
-/* Field Adapted from https://www.shadertoy.com/view/XsyGRW */
 vec3 field(float d) {
     const vec3 c1 = mix(WHITE, YELLOW, 0.4);
     const vec3 c2 = mix(WHITE, AZUR, 0.7);
@@ -95,16 +94,18 @@ vec2 coord(in vec2 p) {
 
 void main() {
     vec2 p = st;
-    
-    float a = sCircle(p - cos(u_time) * 0.2, 0.7);
-    float b = sCircle(p + cos(u_time) * 0.2, 0.1);
+    p *= 10.0;
+    float a = sCircle(p - cos(u_time) * 0.1, 0.7);
+    float b = sCircle(p + cos(u_time) * 0.1, 0.1);
+    float c = sCircle(p + cos(u_time) * 0.2, 0.1);
 
     float d = 0.0;
-    d = sBlendExpo(a, b, 5.0);
+    //d = sBlendExpo(a, b, 5.0);
     //d = sBlendPoly(a, b, 0.5);
-    //d = sBlendPower(a, b, 3.0);
+    d = sBlendPower(a, b, 3.0);
+    float d2 = sBlendPoly(a, c, 5.0);
 
-    vec3 color = field(d * sin(u_time/10.));
-    color = color.brg;
+    vec3 color = field((d + d2) * sin(u_time/12.5)/2.);
+    // color = color.gbr;
 	gl_FragColor = vec4( color, 1.0 );
 }

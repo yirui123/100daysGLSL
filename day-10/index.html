@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <title>Day 10</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, shrink-to-fit=0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        head,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/94/three.js"></script>
+    <script src="raymarcher.js"></script>
+    <script>
+        var rm;
+
+        function init() {
+
+            var w = window.innerWidth;
+            var h = window.innerHeight;
+
+            rm = new RayMarcher()
+                .setSize(w, h)
+                .loadFragmentShader("frag.glsl", animate);
+            document.body.appendChild(rm.domElement);
+
+        }
+        
+        function onFragmentLoaded( scope ) {
+
+            scope.setUniform( "color0", "v3", new THREE.Vector3(0.9, 0.9, 0.0) ); //yellow
+            scope.setUniform( "light0", "v3", new THREE.Vector3(-0.5, 0.75, -0.5) );
+
+            scope.setUniform( "color1", "v3", new THREE.Vector3(0.0, 0.2, 0.9) ); //blue
+            scope.setUniform( "light1", "v3", new THREE.Vector3( 0.5, -0.75, 0.5) );
+
+        }
+    
+        function animate() {
+
+            requestAnimationFrame(animate);
+            //update uniforms
+            rm.update();
+            //render
+            rm.render();
+
+        }
+        init();
+    </script>
+</body>
+
+
+</html>
